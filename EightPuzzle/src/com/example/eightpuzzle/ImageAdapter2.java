@@ -77,6 +77,7 @@ public void setImages()
 		imageInt[i]=getId("i"+puzzle[i], R.drawable.class);
 	//	System.out.println(getId("i"+puzzle[i], R.drawable.class));
 	}
+	System.out.println("Image setup Done");
 }
 public static int getId(String resourceName, Class<?> c) {
     try {

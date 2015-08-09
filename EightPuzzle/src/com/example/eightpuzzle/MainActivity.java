@@ -3,8 +3,13 @@ package com.example.eightpuzzle;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings.Global;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,13 +29,14 @@ private Context context;
 private ImageAdapter2 imageAdapter2;
 private int[] puzzle=new int[8];
 public static int gwidth;
+private DisplayMetrics dmetrics;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		DisplayMetrics dmetrics = new DisplayMetrics();
+		dmetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dmetrics);
 		gwidth = dmetrics.widthPixels / 3;
 		initUI();//initialize the UI
@@ -55,7 +61,6 @@ public static int gwidth;
 		button_submitSolveAI=(Button)findViewById(R.id.button_SolveUsingAI);
 		button_nextPuzzle=(Button)findViewById(R.id.button_NextPuzzle);
 		gridView_PuzzleImage=(GridView)findViewById(R.id.gridView_puzzleImageGrid);
-		
 		Animation anim = new AlphaAnimation(0.0f, 1.0f);
 		anim.setDuration(150); // You can manage the blinking time with this
 		anim.setStartOffset(50);
@@ -69,6 +74,13 @@ public static int gwidth;
 		imageAdapter2.setImages();
 		gridView_PuzzleImage.setAdapter(imageAdapter2);
 		
+		int widthPixels = dmetrics.widthPixels;
+		int heightPixels = dmetrics.heightPixels;	
+		button_submitSolveAI.setMinHeight((int) ((heightPixels/3)*.30));//set the min height /7 width of the button
+		button_submitSolveAI.setMinWidth((widthPixels/2));
+		button_nextPuzzle.setMinHeight((int) ((heightPixels/3)*.30));//set the min height & width of the second button
+		button_nextPuzzle.setMinWidth((widthPixels/2));
+		animatewhatis8puzzle();
 	}
 	
 	
@@ -92,5 +104,18 @@ public static int gwidth;
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * This method animates the whatis 8puzzle text
+	 */
+	private void animatewhatis8puzzle()
+	{
+		SpannableString spanString = new SpannableString("What is 8 Puzzle?");
+		// spanString.setSpan(new UnderlineSpan(), 0, spanString.length(),
+		// Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		spanString.setSpan(new ForegroundColorSpan(Color.BLUE), 0, spanString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		spanString.setSpan(new AbsoluteSizeSpan(25, true), 0, spanString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		whatis8puzzle.setText(spanString);
 	}
 }

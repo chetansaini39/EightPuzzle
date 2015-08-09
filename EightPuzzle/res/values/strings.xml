@@ -4,5 +4,7 @@
     <string name="app_name">EightPuzzle</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="puzzle">An 8 puzzle is a simple game consisting of a 3 x 3 grid (containing 9 squares). One of the squares is empty. The object is to move to squares around into different positions and having the numbers displayed in the goal state.</string>
+    
 
 </resources>
