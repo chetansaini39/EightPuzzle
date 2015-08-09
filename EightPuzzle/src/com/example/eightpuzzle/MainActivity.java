@@ -1,6 +1,7 @@
 package com.example.eightpuzzle;
 
 
+import java.util.Arrays;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -30,7 +31,7 @@ private ImageAdapter2 imageAdapter2;
 private int[] puzzle=new int[8];
 public static int gwidth;
 private DisplayMetrics dmetrics;
-
+private int count_attempt = 0; 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -72,8 +73,7 @@ private DisplayMetrics dmetrics;
 		imageAdapter2 = new ImageAdapter2(context);
 		imageAdapter2.setPuzzle(StaticVariableHolder.puzzle);// initialize the puzzle
 		imageAdapter2.setImages();
-		gridView_PuzzleImage.setAdapter(imageAdapter2);
-		
+		gridView_PuzzleImage.setAdapter(imageAdapter2);	
 		int widthPixels = dmetrics.widthPixels;
 		int heightPixels = dmetrics.heightPixels;	
 		button_submitSolveAI.setMinHeight((int) ((heightPixels/3)*.30));//set the min height /7 width of the button
@@ -118,4 +118,86 @@ private DisplayMetrics dmetrics;
 		spanString.setSpan(new AbsoluteSizeSpan(25, true), 0, spanString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		whatis8puzzle.setText(spanString);
 	}
+	/**
+	 * Method to move blank puzzle piece UP
+	 */
+	private void movePuzzleUP()
+	{
+		count_attempt++;
+		tv_count.setText(String.valueOf(count_attempt));
+		int[] p = puzzleMove.moveUP(puzzle);
+		System.out.println("Puzzle After Swiping UP " + Arrays.toString(p));
+		// paint the puzzle on screen
+		imageAdapter2.setPuzzle(p);// initialize the puzzle
+		imageAdapter2.setImages();
+		gridView.invalidateViews();
+
+		if (Arrays.equals(p, GlobalData.goalState)) {
+			System.out.println("******Goal State Reached ***********");
+			animateGoalState();
+		}
+	}
+
+	/**
+	 * Method to move the blank piece of puzzle DOWN
+	 */
+	private void movePuzzleDown()
+	{
+		count_attempt++;
+		tv_count.setText(String.valueOf(count_attempt));
+		// Toast.makeText(MainActivity.this, "Swipe Bottom",
+		// Toast.LENGTH_SHORT).show();
+		int[] p = puzzleMove.moveDOWN(puzzle);
+		System.out.println("Puzzle After Swiping DOWN " + Arrays.toString(p));
+		imageAdapter2.setPuzzle(p);// initialize the puzzle
+		imageAdapter2.setImages();
+		gridView.invalidateViews();
+		// gridView.setAdapter(imageAdapter2);
+		if (Arrays.equals(p, GlobalData.goalState)) {
+			System.out.println("******Goal State Reached ***********");
+			animateGoalState();
+		}
+	}
+
+	/**
+	 * Method to move blank puzzle piece LEFT
+	 */
+	private void movePuzzleLeft()
+	{
+		count_attempt++;
+		tv_count.setText(String.valueOf(count_attempt));
+		// Toast.makeText(MainActivity.this, "Swipe Left",
+		// Toast.LENGTH_SHORT).show();
+		int[] p = puzzleMove.moveLEFT(puzzle);
+		System.out.println("Puzzle After Swiping LEFT " + Arrays.toString(p));
+		imageAdapter2.setPuzzle(p);// initialize the puzzle
+		imageAdapter2.setImages();
+		gridView.invalidateViews();
+		// gridView.setAdapter(imageAdapter2);
+		if (Arrays.equals(p, GlobalData.goalState)) {
+			System.out.println("******Goal State Reached ***********");
+			animateGoalState();
+		}
+	}
+
+	/**
+	 * Method to move blank puzzle piece RIGHT
+	 */
+	private void movePuzzleRight()
+	{
+		count_attempt++;
+		tv_count.setText(String.valueOf(count_attempt));
+		int[] p = puzzleMove.moveRIGHT(puzzle);
+		System.out.println("Puzzle After Swiping RIGHT " + Arrays.toString(p));
+		imageAdapter2.setPuzzle(p);// initialize the puzzle
+		imageAdapter2.setImages();
+		gridView.invalidateViews();
+		// gridView.setAdapter(imageAdapter2);
+		if (Arrays.equals(p, GlobalData.goalState)) {
+			animateGoalState();
+		}
+	}
+
+
+
 }
