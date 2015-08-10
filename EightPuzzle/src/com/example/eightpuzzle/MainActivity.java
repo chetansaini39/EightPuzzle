@@ -2,6 +2,7 @@ package com.example.eightpuzzle;
 
 
 import java.util.Arrays;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,9 +22,11 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.example.algo.*;
+
 public class MainActivity extends Activity
 {
-private TextView whatis8puzzle,tv_count;
+private TextView whatis8puzzle,tv_count,tv_solSteps;;
 private Button button_submitSolveAI,button_nextPuzzle;
 private GridView gridView_PuzzleImage;
 private int countMovesMade=0;
@@ -32,6 +36,7 @@ private int[] puzzle=new int[8];
 public static int gwidth;
 private DisplayMetrics dmetrics;
 private int count_attempt = 0; 
+private PuzzleMoves puzzleMove;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -40,6 +45,7 @@ private int count_attempt = 0;
 		dmetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dmetrics);
 		gwidth = dmetrics.widthPixels / 3;
+		puzzleMove= new PuzzleMoves();
 		initUI();//initialize the UI
 		startGame();
 	}
@@ -57,7 +63,9 @@ private int count_attempt = 0;
 	 */
 	private void initUI()
 	{
+		puzzle=StaticVariableHolder.puzzle.clone();
 		whatis8puzzle=(TextView)findViewById(R.id.tv_whatis8puzzle);
+		tv_solSteps=(TextView)findViewById(R.id.tv_solSteps);
 		tv_count=(TextView)findViewById(R.id.tv_count);
 		button_submitSolveAI=(Button)findViewById(R.id.button_SolveUsingAI);
 		button_nextPuzzle=(Button)findViewById(R.id.button_NextPuzzle);
@@ -71,7 +79,7 @@ private int count_attempt = 0;
 		tv_count.setText(String.valueOf(countMovesMade));
 		context= getApplicationContext();
 		imageAdapter2 = new ImageAdapter2(context);
-		imageAdapter2.setPuzzle(StaticVariableHolder.puzzle);// initialize the puzzle
+		imageAdapter2.setPuzzle(puzzle);// initialize the puzzle
 		imageAdapter2.setImages();
 		gridView_PuzzleImage.setAdapter(imageAdapter2);	
 		int widthPixels = dmetrics.widthPixels;
@@ -81,6 +89,39 @@ private int count_attempt = 0;
 		button_nextPuzzle.setMinHeight((int) ((heightPixels/3)*.30));//set the min height & width of the second button
 		button_nextPuzzle.setMinWidth((widthPixels/2));
 		animatewhatis8puzzle();
+		
+		//assign swipe controls to grid/view
+		gridView_PuzzleImage.setOnTouchListener(new OnSwipeTouchListener()
+		{
+			public boolean onSwipeTop()
+			{
+				movePuzzleUP();
+				return true;
+			}
+
+			@Override
+			public boolean onSwipeBottom()
+			{
+				movePuzzleDown();
+				return true;
+			}
+
+			@Override
+			public boolean onSwipeLeft()
+			{
+				movePuzzleLeft();
+				return true;
+			}
+
+			@Override
+			public boolean onSwipeRight()
+			{
+				movePuzzleRight();
+				return true;
+			}
+			
+		}
+			);
 	}
 	
 	
@@ -107,7 +148,7 @@ private int count_attempt = 0;
 	}
 
 	/**
-	 * This method animates the whatis 8puzzle text
+	 * This method animates the what is 8puzzle text
 	 */
 	private void animatewhatis8puzzle()
 	{
@@ -130,7 +171,7 @@ private int count_attempt = 0;
 		// paint the puzzle on screen
 		imageAdapter2.setPuzzle(p);// initialize the puzzle
 		imageAdapter2.setImages();
-		gridView.invalidateViews();
+		gridView_PuzzleImage.invalidateViews();
 
 		if (Arrays.equals(p, GlobalData.goalState)) {
 			System.out.println("******Goal State Reached ***********");
@@ -151,7 +192,7 @@ private int count_attempt = 0;
 		System.out.println("Puzzle After Swiping DOWN " + Arrays.toString(p));
 		imageAdapter2.setPuzzle(p);// initialize the puzzle
 		imageAdapter2.setImages();
-		gridView.invalidateViews();
+		gridView_PuzzleImage.invalidateViews();
 		// gridView.setAdapter(imageAdapter2);
 		if (Arrays.equals(p, GlobalData.goalState)) {
 			System.out.println("******Goal State Reached ***********");
@@ -172,7 +213,7 @@ private int count_attempt = 0;
 		System.out.println("Puzzle After Swiping LEFT " + Arrays.toString(p));
 		imageAdapter2.setPuzzle(p);// initialize the puzzle
 		imageAdapter2.setImages();
-		gridView.invalidateViews();
+		gridView_PuzzleImage.invalidateViews();
 		// gridView.setAdapter(imageAdapter2);
 		if (Arrays.equals(p, GlobalData.goalState)) {
 			System.out.println("******Goal State Reached ***********");
@@ -191,13 +232,26 @@ private int count_attempt = 0;
 		System.out.println("Puzzle After Swiping RIGHT " + Arrays.toString(p));
 		imageAdapter2.setPuzzle(p);// initialize the puzzle
 		imageAdapter2.setImages();
-		gridView.invalidateViews();
-		// gridView.setAdapter(imageAdapter2);
+		gridView_PuzzleImage.invalidateViews();
 		if (Arrays.equals(p, GlobalData.goalState)) {
+			System.out.println("******Goal State Reached ***********");
 			animateGoalState();
 		}
 	}
 
+	/**
+	 * This method animates the goal state. Show user that they have won.
+	 */
+	private void animateGoalState()
+	{
+		SpannableString spanString = new SpannableString("You have won");
+		spanString.setSpan(new UnderlineSpan(), 0, spanString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		// spanString.setSpan(new ForegroundColorSpan(Color.GREEN), 0,
+		// spanString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		spanString.setSpan(new AbsoluteSizeSpan(35, true), 0, spanString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		tv_solSteps.setText(spanString);
+	//TODO disable gridview swipe
 
+	}
 
 }
