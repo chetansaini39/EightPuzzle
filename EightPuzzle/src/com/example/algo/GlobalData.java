@@ -17,6 +17,6 @@ public class GlobalData
     public static int[] puzzle3={1,6,8,0,4,2,7,5,3};
     public static int[] puzzle4={2,8,1,0,4,3,7,6,5};//working
     public static int[] puzzle5={5,6,7,4,0,8,3,2,1};
-    public static int goalState[]={1,2,3,8,0,4,7,6,5};
+    public static final int goalState[]={1,2,3,8,0,4,7,6,5};
     public static boolean goalReached=false;
 }

@@ -56,6 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:background="@color/grid_background"
             android:numColumns="3" >
 
         </GridView>
@@ -74,6 +75,7 @@
             android:id="@+id/button_SolveUsingAI"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onClick_solveUsingAI"
             android:text="Solve Using AI" />
 
         <Button
@@ -81,6 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/button_SolveUsingAI"
+            android:onClick="onClick_nextPuzzle"
             android:text="Next Puzzle" />
 
         <TextView
@@ -88,6 +91,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/button_SolveUsingAI"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/tv_goalReached"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_solSteps"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
     </RelativeLayout>

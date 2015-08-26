@@ -6,27 +6,33 @@ import java.util.Arrays;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings.Global;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.chetan.nextPuzzle.NextPuzzleGenerator;
 import com.example.algo.*;
+
 
 public class MainActivity extends Activity
 {
-private TextView whatis8puzzle,tv_count,tv_solSteps;;
+private TextView whatis8puzzle,tv_count,tv_solSteps,tv_goalRached;;
 private Button button_submitSolveAI,button_nextPuzzle;
 private GridView gridView_PuzzleImage;
 private int countMovesMade=0;
@@ -37,6 +43,10 @@ public static int gwidth;
 private DisplayMetrics dmetrics;
 private int count_attempt = 0; 
 private PuzzleMoves puzzleMove;
+private A_Star_H_Two aStar;
+private String solution="";
+private int aicount = 0 ;
+SpannableString spanString;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -67,6 +77,7 @@ private PuzzleMoves puzzleMove;
 		whatis8puzzle=(TextView)findViewById(R.id.tv_whatis8puzzle);
 		tv_solSteps=(TextView)findViewById(R.id.tv_solSteps);
 		tv_count=(TextView)findViewById(R.id.tv_count);
+		tv_goalRached=(TextView)findViewById(R.id.tv_goalReached);
 		button_submitSolveAI=(Button)findViewById(R.id.button_SolveUsingAI);
 		button_nextPuzzle=(Button)findViewById(R.id.button_NextPuzzle);
 		gridView_PuzzleImage=(GridView)findViewById(R.id.gridView_puzzleImageGrid);
@@ -89,7 +100,8 @@ private PuzzleMoves puzzleMove;
 		button_nextPuzzle.setMinHeight((int) ((heightPixels/3)*.30));//set the min height & width of the second button
 		button_nextPuzzle.setMinWidth((widthPixels/2));
 		animatewhatis8puzzle();
-		
+		tv_solSteps.setSaveFromParentEnabled(false);
+		tv_solSteps.setSaveEnabled(true);
 		//assign swipe controls to grid/view
 		gridView_PuzzleImage.setOnTouchListener(new OnSwipeTouchListener()
 		{
@@ -244,14 +256,166 @@ private PuzzleMoves puzzleMove;
 	 */
 	private void animateGoalState()
 	{
-		SpannableString spanString = new SpannableString("You have won");
-		spanString.setSpan(new UnderlineSpan(), 0, spanString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		tv_solSteps.clearComposingText();
+		spanString.removeSpan(new RelativeSizeSpan(2.0f) );
+		spanString.removeSpan(new UnderlineSpan() );
+		spanString.removeSpan(new ForegroundColorSpan(Color.YELLOW));
+		spanString.removeSpan(tv_solSteps);
+		spanString = new SpannableString("You have won");
+		spanString.setSpan(new UnderlineSpan(), 0, spanString.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 		// spanString.setSpan(new ForegroundColorSpan(Color.GREEN), 0,
 		// spanString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		spanString.setSpan(new AbsoluteSizeSpan(35, true), 0, spanString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		spanString.setSpan(new AbsoluteSizeSpan(35, true), 0, spanString.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 		tv_solSteps.setText(spanString);
+		
 	//TODO disable gridview swipe
 
+	}
+
+	/**
+	 * Method for solving the game using the AI Method is called for the AI
+	 * button
+	 * 
+	 */
+	public String solveUsingAI()
+	{
+
+		aStar = new A_Star_H_Two(puzzle);
+		System.out.println("AI Solving Puzzle : " + Arrays.toString(puzzle));
+		if (Arrays.equals(puzzle, GlobalData.goalState)) {
+			Toast.makeText(MainActivity.this, "Already in GOAL state", Toast.LENGTH_SHORT).show();
+		}
+
+		else {
+
+			aStar.solve();
+			solution = aStar.getSolutionSteps();
+			
+		}
+		return solution;
+	}
+
+	/**
+	 * Methods that runs the astar algo as background thread or as async task to avoid UI thread errors
+	 * @author chetan
+	 *
+	 */
+	private class SolveUsingAI_AsyncTask extends AsyncTask<Void, Void, String>
+	{
+
+		@Override
+		protected String doInBackground(Void... params)
+		{
+			System.out.println("in do in background");
+			return solveUsingAI();
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			super.onPostExecute(result);
+			System.out.println("in Post Execute");
+			gridView_AI();animateSolutionSteps();;
+		}
+	
+
+	}
+	
+	/**
+	 * Method called when grid view follows the solutions steps.
+	 */
+	private void gridView_AI()
+	{
+		gridView_PuzzleImage.setOnTouchListener(new OnSwipeTouchListener()
+		{
+			@Override
+			public boolean onSwipeLeft()
+			{
+				
+				if (solution.charAt(aicount) == 'L') {
+					aicount++;
+					movePuzzleLeft();
+					animateSolutionSteps();
+				}
+
+				return true;
+			}
+
+			@Override
+			public boolean onSwipeRight()
+			{
+				if (solution.charAt(aicount) == 'R') {
+					aicount++;
+					movePuzzleRight();
+					animateSolutionSteps();
+				}
+				return true;
+			}
+
+			@Override
+			public boolean onSwipeTop()
+			{
+				if (solution.charAt(aicount) == 'U') {
+					aicount++;
+					movePuzzleUP();
+					animateSolutionSteps();
+				}
+				return true;
+			}
+
+			@Override
+			public boolean onSwipeBottom()
+			{
+				if (solution.charAt(aicount) == 'D') {
+					aicount++;
+					movePuzzleDown();
+					animateSolutionSteps();
+				}
+				return true;
+			}
+		});
+	}
+	/**
+	 * Method to change the effects on the solutions steptext. It underlines,
+	 * change size of the current move
+	 */
+	private void animateSolutionSteps()
+	{
+		tv_solSteps.setTextColor(Color.BLUE);
+		if(aicount<solution.length())
+		{
+		spanString = new SpannableString(solution);
+		System.out.println("Span String-> "+spanString+" Length-> "+spanString.length()+" \t aicount : "+aicount);
+		spanString.setSpan(new RelativeSizeSpan(2.0f), aicount, aicount+1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+		spanString.setSpan(new UnderlineSpan(), aicount, aicount+1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+		spanString.setSpan(new ForegroundColorSpan(Color.GREEN), aicount, aicount+1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+		tv_solSteps.setText(spanString);
+		}
+		
+	}
+	
+	/**
+	 * Method that gets called when solve using AI button is clicked
+	 * @param v
+	 */
+	public void onClick_solveUsingAI(View v)
+	{
+		SolveUsingAI_AsyncTask asyncTask = new SolveUsingAI_AsyncTask();
+		asyncTask.execute();
+	}
+	
+	/**
+	 * Method to generate next puzzle
+	 */
+	public void onClick_nextPuzzle(View v)
+	{
+		aicount=0;count_attempt=0;
+		tv_solSteps.setText("");
+//		tv_solSteps.clearComposingText();
+//		spanString.removeSpan(tv_solSteps);
+		NextPuzzleGenerator nextPuzzleGenerator=new NextPuzzleGenerator();
+		StaticVariableHolder.puzzle=nextPuzzleGenerator.puzzle;
+		initUI();
 	}
 
 }
