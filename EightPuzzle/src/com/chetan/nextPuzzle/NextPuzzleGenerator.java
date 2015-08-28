@@ -7,28 +7,39 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import com.example.algo.A_Star_H_Two;
-import com.example.algo.GlobalData;
-import com.example.algo.HelperMethods;
-import com.example.algo.PuzzleMoves;
-import com.example.eightpuzzle.StaticVariableHolder;
+import android.content.Context;
+
+import com.chetan.algo.A_Star_H_Two;
+import com.chetan.algo.GlobalData;
+import com.chetan.algo.HelperMethods;
+import com.chetan.algo.PuzzleMoves;
+import com.chetan.eightpuzzle.FileHandling;
+import com.chetan.eightpuzzle.StaticVariableHolder;
 
 public class NextPuzzleGenerator
 {
 
 	public int puzzle[] = GlobalData.goalState.clone();
-	int noSteps = 6;// working fine with 20
-	int zeroPos = 0;
-	HelperMethods helper = new HelperMethods();
-	int puzzleLength = puzzle.length;
-	List<Integer> list = new ArrayList<Integer>();
-	PuzzleMoves moves = new PuzzleMoves();
-	int inversion = 0;
-	A_Star_H_Two aStar;
-	int randomNumber=0;
-	public NextPuzzleGenerator()
+	private int noSteps = 7;// working fine with 20
+	private int zeroPos = 0;
+	 HelperMethods helper = new HelperMethods();
+	private int puzzleLength = puzzle.length;
+	private List<Integer> list = new ArrayList<Integer>();
+	private PuzzleMoves moves = new PuzzleMoves();
+	private int inversion = 0;
+	 A_Star_H_Two aStar;
+	private int randomNumber=0;
+	FileHandling fileHandling;
+	public NextPuzzleGenerator(Context context)
 	{
-	
+//		fileHandling=new FileHandling(context);
+//		fileHandling.initFileStorage();
+//		noSteps=fileHandling.readFromFile();
+//		System.out.println("No Of Steps : "+noSteps);
+//		if(noSteps<StaticVariableHolder.maxLevel) 
+//		{
+//		fileHandling.writeToFile(noSteps+1);
+//		}
 		shuffle2();
 	}
 

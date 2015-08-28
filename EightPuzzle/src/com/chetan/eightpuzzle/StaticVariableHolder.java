@@ -1,6 +1,6 @@
 
 
-package com.example.eightpuzzle;
+package com.chetan.eightpuzzle;
 
 
 public class StaticVariableHolder
@@ -15,5 +15,7 @@ public class StaticVariableHolder
     public static String solutionSteps = "";
     public static boolean usingAI = false;
     public static int[] puzzle={1,3,4,8,6,2,7,0,5};//working
+    public static int readFromFile;
+    public static int maxLevel=10;
 
 }

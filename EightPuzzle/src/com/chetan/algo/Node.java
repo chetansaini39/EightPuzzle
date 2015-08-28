@@ -1,4 +1,4 @@
-package com.example.algo;
+package com.chetan.algo;
 
 import java.util.Arrays;
 

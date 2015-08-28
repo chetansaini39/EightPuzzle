@@ -1,10 +1,11 @@
-package com.example.eightpuzzle;
+package com.chetan.eightpuzzle;
 
 
 import java.util.Arrays;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,9 +27,8 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.chetan.algo.*;
 import com.chetan.nextPuzzle.NextPuzzleGenerator;
-import com.example.algo.*;
-
 
 public class MainActivity extends Activity
 {
@@ -413,9 +413,15 @@ SpannableString spanString;
 		tv_solSteps.setText("");
 //		tv_solSteps.clearComposingText();
 //		spanString.removeSpan(tv_solSteps);
-		NextPuzzleGenerator nextPuzzleGenerator=new NextPuzzleGenerator();
+		NextPuzzleGenerator nextPuzzleGenerator=new NextPuzzleGenerator(context);
 		StaticVariableHolder.puzzle=nextPuzzleGenerator.puzzle;
 		initUI();
+	}
+	
+	public void whatis8puzzle(View v)
+	{
+		Intent intent= new Intent(context, whatis8puzzle.class);
+		startActivity(intent);
 	}
 
 }
