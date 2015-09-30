@@ -46,6 +46,7 @@ private PuzzleMoves puzzleMove;
 private A_Star_H_Two aStar;
 private String solution="";
 private int aicount = 0 ;
+NextPuzzleGenerator nextPuzzleGenerator;
 SpannableString spanString;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -89,6 +90,7 @@ SpannableString spanString;
 		tv_count.setAnimation(anim);
 		tv_count.setText(String.valueOf(countMovesMade));
 		context= getApplicationContext();
+		nextPuzzleGenerator=new NextPuzzleGenerator(context);
 		imageAdapter2 = new ImageAdapter2(context);
 		imageAdapter2.setPuzzle(puzzle);// initialize the puzzle
 		imageAdapter2.setImages();
@@ -413,7 +415,7 @@ SpannableString spanString;
 		tv_solSteps.setText("");
 //		tv_solSteps.clearComposingText();
 //		spanString.removeSpan(tv_solSteps);
-		NextPuzzleGenerator nextPuzzleGenerator=new NextPuzzleGenerator(context);
+		nextPuzzleGenerator.shuffle2();
 		StaticVariableHolder.puzzle=nextPuzzleGenerator.puzzle;
 		initUI();
 	}
@@ -424,4 +426,12 @@ SpannableString spanString;
 		startActivity(intent);
 	}
 
+	/**
+	 * Method to increase the level
+	 * @param v
+	 */
+	public void onClick_LevelUp(View v)
+	{
+		nextPuzzleGenerator.increaseLevel();
+	}
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.chetan.algo.A_Star_H_Two;
 import com.chetan.algo.GlobalData;
@@ -20,7 +21,7 @@ public class NextPuzzleGenerator
 {
 
 	public int puzzle[] = GlobalData.goalState.clone();
-	private int noSteps = 7;// working fine with 20
+	private int noSteps = 6;// working fine with 20
 	private int zeroPos = 0;
 	 HelperMethods helper = new HelperMethods();
 	private int puzzleLength = puzzle.length;
@@ -30,18 +31,13 @@ public class NextPuzzleGenerator
 	 A_Star_H_Two aStar;
 	private int randomNumber=0;
 	FileHandling fileHandling;
+	private Context context;
 	public NextPuzzleGenerator(Context context)
 	{
-//		fileHandling=new FileHandling(context);
-//		fileHandling.initFileStorage();
-//		noSteps=fileHandling.readFromFile();
-//		System.out.println("No Of Steps : "+noSteps);
-//		if(noSteps<StaticVariableHolder.maxLevel) 
-//		{
-//		fileHandling.writeToFile(noSteps+1);
-//		}
-		shuffle2();
+		this.context=context;
+		
 	}
+	
 
 	int lastMOVE = 0;
 
@@ -365,4 +361,18 @@ public class NextPuzzleGenerator
 		}
 		return randNum;
 	}
+
+	public void increaseLevel()
+	{
+		fileHandling=new FileHandling(context);
+		fileHandling.initFileStorage();
+		noSteps=fileHandling.readFromFile();
+		System.out.println("No Of Steps : "+noSteps);
+		if(noSteps<StaticVariableHolder.maxLevel) 
+		{
+		fileHandling.writeToFile(noSteps+1);
+		Toast.makeText(context, "Level Increased To : "+(noSteps-5), Toast.LENGTH_LONG).show();
+		}
+	}
+
 }

@@ -87,6 +87,16 @@
             android:onClick="onClick_nextPuzzle"
             android:text="Next Puzzle" />
 
+        <Button
+            android:id="@+id/button_LevelUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/button_NextPuzzle"
+            android:onClick="onClick_LevelUp"
+            android:drawableRight="@drawable/rsz_up_arrow"
+            android:text="Level UP" />
+
         <TextView
             android:id="@+id/tv_solSteps"
             android:layout_width="wrap_content"

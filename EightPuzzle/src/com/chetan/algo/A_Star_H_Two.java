@@ -48,15 +48,11 @@ public class A_Star_H_Two {
         Node node = new Node(puzzle, 0, "", 0);
         Node currentNode;
         fnMax = nodeCostCalculate.calcManhattan(node.getPuzzle());
-//        System.out.println("Cost of the root f(n)=g(n)+h(n)  => " + fnMax);
         listNode.add(node);
-        addToMapAndStack(listNode, count);
-//        System.out.println("************************************************* First Step*********************");
+        addToMapAndStack(listNode, count);;
         currentNode = stack.pop();
         listNode = (GenerateStateNodes(currentNode));
-//        printListNodes(listNode);
         addToMapAndStack(listNode, count);
-//        printStack(stack);
         while (stack.size() > 0) {
             currentNode = stack.pop();
             listNode = (GenerateStateNodes(currentNode));
@@ -100,7 +96,6 @@ public class A_Star_H_Two {
                 }
                 else
                 {
-                	System.out.println("Solution Not Found!!");
                 	solutionSteps="Solution Not Found!!";
                 }
             }
