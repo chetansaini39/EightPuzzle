@@ -362,6 +362,9 @@ public class NextPuzzleGenerator
 		return randNum;
 	}
 
+	/**
+	 * Method to increase the Level of puzzle
+	 */
 	public void increaseLevel()
 	{
 		fileHandling=new FileHandling(context);
